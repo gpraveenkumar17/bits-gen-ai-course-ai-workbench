@@ -1,6 +1,7 @@
+import os
 from fastapi import FastAPI
-from .models import TaskRequest, TaskResponse
-from .service import execute_task
+from .models import TaskRequest, TaskResponse, HealthResponse
+from .service import process_task
 
 app = FastAPI(
     title="AI Workbench REST API",
@@ -10,31 +11,35 @@ app = FastAPI(
 
 @app.get("/health", tags=["Health"])
 def health():
-    return {"status": "healthy"}
+    health_response = HealthResponse(
+        model=os.getenv("OPENAI_MODEL"),
+        provider=os.getenv("LLM_PROVIDER")
+    )
+    return health_response
 
 @app.post("/tasks/summarize", response_model=TaskResponse, tags=["Tasks"])
 def summarize(request: TaskRequest):
-    return execute_task("summarize", request.text)
+    return process_task("summarize", request.text)
 
 @app.post("/tasks/rewrite", response_model=TaskResponse, tags=["Tasks"])
 def rewrite(request: TaskRequest):
-    return execute_task("rewrite", request.text)
+    return process_task("rewrite", request.text)
 
 @app.post("/tasks/key-points", response_model=TaskResponse, tags=["Tasks"])
 def key_points(request: TaskRequest):
-    return execute_task("key_points", request.text)
+    return process_task("key_points", request.text)
 
 @app.post("/tasks/explain", response_model=TaskResponse, tags=["Tasks"])
 def explain(request: TaskRequest):
-    return execute_task("explain", request.text)
+    return process_task("explain", request.text)
 
 @app.post("/tasks/generate-questions", response_model=TaskResponse, tags=["Tasks"])
 def generate_questions(request: TaskRequest):
-    return execute_task("generate_questions", request.text)
+    return process_task("generate_questions", request.text)
 
 @app.post("/tasks/translate-tamil", response_model=TaskResponse, tags=["Tasks"])
 def translate_tamil(request: TaskRequest):
-    return execute_task("translate_tamil", request.text)
+    return process_task("translate_tamil", request.text)
 
 if __name__ == "__main__":
     import uvicorn

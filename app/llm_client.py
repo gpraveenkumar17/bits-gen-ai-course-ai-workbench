@@ -10,13 +10,21 @@ if not api_key:
     raise RuntimeError("OPENAI_API_KEY environment variable is not set in .env")
 
 client = OpenAI(api_key=api_key)
-DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 
-def execute_chat_completion(system_prompt: str, user_text: str, model: str = DEFAULT_MODEL) -> dict:
+LLM_PROVIER = os.getenv("LLM_PROVIDER", "openai")  # Default to OpenAI if not specified
+
+def generate_output(system_prompt: str, user_text: str) -> dict:
+    model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+    if LLM_PROVIER == "openai":
+        return _execute_chat_completion(system_prompt, user_text, model)
+    else:
+        raise HTTPException(status_code=400, detail=f"Unsupported LLM provider: {LLM_PROVIER}")
+
+def _execute_chat_completion(system_prompt: str, user_text: str, model) -> dict:
     try:
         response = client.chat.completions.create(
-            model=model,
-            messages=[
+            model = model,
+            messages = [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_text},
             ],

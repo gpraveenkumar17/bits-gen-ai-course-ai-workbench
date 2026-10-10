@@ -8,3 +8,7 @@ class TaskResponse(BaseModel):
     content: str = Field(..., description="Generated text response from the model")
     tokens: int = Field(..., description="Total tokens used")
     model: str = Field(..., description="Model name utilized for generation")
+
+class HealthResponse(BaseModel):
+    model: str = Field(..., description="Model name utilized for generation")
+    provider: str = Field(..., description="LLM provider used for generation")

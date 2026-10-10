@@ -1,5 +1,5 @@
 from .models import TaskResponse
-from .llm_client import execute_chat_completion
+from .llm_client import generate_output
 
 PROMPTS = {
     "summarize": (
@@ -28,9 +28,11 @@ PROMPTS = {
     ),
 }
 
-def execute_task(task_key: str, text: str) -> TaskResponse:
+def process_task(task_key: str, text: str) -> TaskResponse:
+    if task_key not in PROMPTS:
+        raise ValueError(f"Invalid task key: {task_key}. Valid keys are: {list(PROMPTS.keys())}")
     task_name, system_prompt = PROMPTS[task_key]
-    result = execute_chat_completion(system_prompt=system_prompt, user_text=text)
+    result = generate_output(system_prompt=system_prompt, user_text=text)
     
     return TaskResponse(
         task=task_name,
