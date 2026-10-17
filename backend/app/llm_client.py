@@ -28,8 +28,8 @@ def _execute_chat_completion(system_prompt: str, user_text: str, model) -> dict:
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_text},
             ],
-            temperature=0.7,
-            max_tokens=100,
+            temperature=1.5,
+            max_tokens=1000,
         )
         return {
             "content": response.choices[0].message.content,
